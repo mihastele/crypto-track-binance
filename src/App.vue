@@ -1,3 +1,5 @@
+
+
 <template>
   <div class="container py-5">
     <div class="crypto-header mb-5 text-center">
@@ -34,7 +36,7 @@
               <tr>
                 <th class="ps-4">Coin</th>
                 <th>Price (USDT)</th>
-                <th>24h Chart</th>
+                <!-- <th>24h Chart</th> -->
                 <th>Change</th>
                 <th class="pe-4">Market Cap</th>
               </tr>
@@ -43,9 +45,6 @@
               <tr v-for="ticker in sortedTickers" :key="ticker.symbol">
                 <td class="ps-4">
                   <div class="d-flex align-items-center">
-                    <img :src="`https://coinicons-api.vercel.app/api/icon/${ticker.symbol.replace('USDT', '').toLowerCase()}`" 
-                         class="rounded-circle me-3" width="32" height="32"
-                         onerror="this.src='https://via.placeholder.com/32'">
                     <div>
                       <div class="fw-bold">{{ ticker.symbol.replace('USDT', '') }}</div>
                       <div class="text-muted small">{{ ticker.symbol }}</div>
@@ -57,13 +56,13 @@
                   <span class="fw-bold">${{ parseFloat(ticker.lastPrice).toFixed(2) }}</span>
                 </td>
 
-                <td style="width: 120px">
+                <!-- <td style="width: 120px">
                   <SparklineChart :data="generateSparklineData(ticker)" />
-                </td>
+                </td> -->
 
                 <td>
                   <span :class="['badge', getChangeClass(ticker.changes[selectedTimeFrame])]">
-                    <i :class="['fas', ticker.changes[selectedTimeFrame] > 0 ? 'fa-arrow-up' : 'fa-arrow-down']"></i>
+                    <font-awesome-icon icon="fa-solid {{  ticker.changes[selectedTimeFrame] > 0 ? 'fa-arrow-up' : 'fa-arrow-down' }}" />
                     {{ ticker.changes[selectedTimeFrame].toFixed(2) }}%
                   </span>
                 </td>
@@ -81,6 +80,7 @@
 </template>
 
 <script setup>
+
 import { ref, computed, onMounted, watch } from 'vue'
 import { Chart } from 'chart.js/auto'
 
