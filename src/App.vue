@@ -172,21 +172,46 @@ onMounted(async () => {
   }
 })
 
-watch(selectedTimeFrame, async (newTimeFrame) => {
-  if (newTimeFrame === '24h') return // Already loaded initially
+const generateSparklineData = (ticker) => {
+  // Get data for current time frame
+  const timeFrameData = {
+    '24h': ticker.sparkline,
+    '1w': ticker.weeklySparkline || [],
+    '1M': ticker.monthlySparkline || [],
+    '1y': ticker.yearlySparkline || [],
+    'all': ticker.allTimeSparkline || []
+  }
 
-  const needsFetch = tickers.value.some(t => !t.changes[newTimeFrame])
+  const values = timeFrameData[selectedTimeFrame.value]
+  const labels = Array.from({ length: values.length }, (_, i) => i + 1)
+  
+  return {
+    labels,
+    values,
+    change: ticker.changes[selectedTimeFrame.value]
+  }
+}
+
+
+watch(selectedTimeFrame, async (newTimeFrame) => {
+  if (newTimeFrame === '24h') return
+
+  const needsFetch = tickers.value.some(t => 
+    !t[`${newTimeFrame}Sparkline`] && !t.changes[newTimeFrame]
+  )
+
   if (!needsFetch) return
 
   try {
     loading.value = true
     const updated = await Promise.all(
       tickers.value.map(async ticker => {
-        if (ticker.changes[newTimeFrame]) return ticker
+        if (ticker[`${newTimeFrame}Sparkline`]) return ticker
         
         const historical = await fetchHistoricalPrice(ticker.symbol, newTimeFrame)
         return {
           ...ticker,
+          [`${newTimeFrame}Sparkline`]: historical,
           changes: {
             ...ticker.changes,
             [newTimeFrame]: calculateChange(historical[0], ticker.lastPrice)
