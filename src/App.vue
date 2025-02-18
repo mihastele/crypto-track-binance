@@ -84,7 +84,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { Chart } from 'chart.js/auto'
 
-const PROXY_URL = 'https://cors-anywhere.herokuapp.com/'
+// const PROXY_URL = 'https://cors-anywhere.herokuapp.com/'
 const BINANCE_URL = 'https://api.binance.com/api/v3'
 
 const tickers = ref([])
@@ -126,7 +126,7 @@ const SparklineChart = {
 
 const fetchTop40ByVolume = async () => {
   try {
-    const response = await fetch(`${PROXY_URL}${BINANCE_URL}/ticker/24hr`)
+    const response = await fetch(`${BINANCE_URL}/ticker/24hr`)
     const allTickers = await response.json()
     
     return allTickers
@@ -151,7 +151,7 @@ const fetchHistoricalPrice = async (symbol, period) => {
 
     const { interval, limit } = intervals[period]
     const response = await fetch(
-      `${PROXY_URL}${BINANCE_URL}/klines?` + 
+      `${BINANCE_URL}/klines?` + 
       new URLSearchParams({
         symbol,
         interval,
